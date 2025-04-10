@@ -6,3 +6,8 @@ Working:
 
 Known issues:
 -Bind calculation over item id: 33554432+
+
+Required modules:
+pip install flask:
+
+Running on http://127.0.0.1:5000
