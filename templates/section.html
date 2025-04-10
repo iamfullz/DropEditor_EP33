@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ section_name }}</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2rem;
+        }
+        table {
+            width: 100%;
+        }
+        .back {
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+        .desc {
+            font-size: 0.8em;
+            color: #555;
+        }
+        thead input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <a href="{{ url_for('index') }}" class="back">← Back to Table List</a>
+    <h1>{{ section_name }}</h1>
+
+    <table id="datatable" class="display">
+        <thead>
+            <tr>
+                {% for col in header %}
+                <th>{{ col }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                {% for i in range(header|length) %}
+                <td>
+                    {% if i < row|length %}
+                        {% set col_name = header[i] %}
+                        {% set val = row[i] %}
+                        <div>{{ val }}</div>
+
+                        {# Alap szöveges értelmezés .dec alapján #}
+                        {% set desc = get_description(col_name, val) %}
+
+                        {# World_BoxDrop: BoxIdx → SpeciesIdx → név #}
+                        {% if not desc and section_name == "World_BoxDrop" and col_name == "BoxIdx" %}
+                            {% set species_id = box_to_species.get(val|string) %}
+                            {% if species_id %}
+                                {% set desc = get_description("SpeciesIdx", species_id) %}
+                            {% endif %}
+                        {% endif %}
+
+                        {% if desc %}
+                            <div class="desc">{{ desc }}</div>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const $table = $('#datatable');
+
+            // Töröljük az előző szűrősorokat, ha valamiért megmaradtak
+            $table.find('thead tr.filters').remove();
+
+            // Klónozzuk a fejléc sort a szűrőhöz
+            const $filterRow = $table.find('thead tr:first').clone().addClass('filters');
+            $filterRow.find('th').each(function () {
+                $(this).html('<input type="text" placeholder="Filter" style="width: 100%"/>');
+            });
+            $table.find('thead').append($filterRow);
+
+            // Inicializáljuk a táblát
+            const table = $table.DataTable({
+                orderCellsTop: true,
+                fixedHeader: true,
+                pageLength: 25,
+                initComplete: function () {
+                    const api = this.api();
+
+                    api.columns().eq(0).each(function (colIdx) {
+                        $('input', $('.filters th').eq(colIdx)).on('input', function () {
+                            const val = this.value;
+                            api
+                                .column(colIdx)
+                                .search(val, false, true)  // részleges keresés, nem regex
+                                .draw();
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+
+
+
+
+</body>
+</html>

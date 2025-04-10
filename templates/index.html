@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Drop Tables</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2rem;
+        }
+        table {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Drop Tables</h1>
+    <table id="sections" class="display">
+        <thead>
+            <tr>
+                <th>Section Name</th>
+                <th>Columns</th>
+                <th>Rows</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for name, info in sections.items() %}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ info.columns }}</td>
+                <td>{{ info.rows }}</td>
+                <td><a href="{{ url_for('view_section', section_name=name) }}">Open</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#sections').DataTable();
+        });
+    </script>
+</body>
+</html>
