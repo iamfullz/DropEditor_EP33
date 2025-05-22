@@ -65,7 +65,7 @@
                 {% set col_name = header[col_index] %}
                 <td
                     data-col="{{ col_name }}"
-                    class="{% if col_name in ['ItemKind', 'DungeonID', 'WorldIdx', 'BoxIdx', 'DropRate', 'ItemOpt'] %}editable{% endif %}">
+                    class="{% if col_name in ['ItemKind', 'DungeonID', 'WorldIdx', 'BoxIdx', 'DropRate', 'ItemOpt', 'OptPoolIdx'] %}editable{% endif %}">
                     {% if col_index < row|length %}
                         {% set val = row[col_index] %}
                         {% set desc = get_description(col_name, val) %}
@@ -75,7 +75,7 @@
                                 {% set desc = get_description("SpeciesIdx", species_id) %}
                             {% endif %}
                         {% endif %}
-                        {% if col_name in ['ItemKind', 'DungeonID', 'WorldIdx', 'BoxIdx', 'DropRate', 'ItemOpt'] %}
+                        {% if col_name in ['ItemKind', 'DungeonID', 'WorldIdx', 'BoxIdx', 'DropRate', 'ItemOpt', 'OptPoolIdx'] %}
                             <span class="value" contenteditable="true">{{ val }}</span>
                             {% if desc %}<span class="desc"> ({{ desc }})</span>{% endif %}
                         {% else %}

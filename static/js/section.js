@@ -113,7 +113,7 @@ $(document).ready(function () {
         const cols = $('#datatable thead th').length - 1;
         for (let i = 1; i < cols + 1; i++) {
             const colName = $('#datatable thead th').eq(i).text().trim();
-            if (["ItemKind", "DungeonID", "WorldIdx", "BoxIdx", "DropRate", "ItemOpt"].includes(colName)) {
+            if (["ItemKind", "DungeonID", "WorldIdx", "BoxIdx", "DropRate", "ItemOpt", "OptPoolIdx"].includes(colName)) {
                 row.push(`<span class="value" contenteditable="true"></span>`);
             } else {
                 row.push('');
@@ -188,5 +188,17 @@ $(document).ready(function () {
         table.columns().search('').draw();
         updateDropRateSummary(table);
         refreshFilterOptions(table);
+    });
+
+    // Make existing OptPoolIdx cells editable
+    $('#datatable tbody tr').each(function () {
+        $(this).find('td').each(function () {
+            const $td = $(this);
+            const colName = $td.data('col');
+            if (colName === 'OptPoolIdx' && !$td.find('.value').length) {
+                const cellText = $td.text().trim();
+                $td.html(`<span class="value" contenteditable="true">${cellText}</span>`);
+            }
+        });
     });
 });
