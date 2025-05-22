@@ -138,26 +138,29 @@ $(document).ready(function () {
                 $cell.append(`<span class="desc"> (${desc})</span>`);
             }
         });
+
+        // Update DropRate summary in real time when editing
+        updateDropRateSummary(table);
     });
 
     // mentés
     $('#saveButton').on('click', function () {
         const modified = [];
 
-        $('#datatable tbody tr').each(function () {
-            const $row = $(this);
+        table.rows().every(function () {
+            const row = this.node();
             const rowData = [];
-
-            $row.find('td').not('.delete-cell').each(function () {
+            $(row).find('td').not('.delete-cell').each(function () {
                 const $td = $(this);
                 const $val = $td.find('.value');
                 if ($val.length > 0) {
                     rowData.push($val.text().trim());
                 } else {
-                    rowData.push($td.text().trim());
+                    let cellText = $td.text().trim();
+                    cellText = cellText.replace(/\s*\([^)]*\)$/, '').trim();
+                    rowData.push(cellText);
                 }
             });
-
             modified.push(rowData);
         });
 
