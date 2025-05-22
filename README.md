@@ -1,4 +1,4 @@
-Cabal Online Ep33+ Drop Editor by PwrDex & AI
+Cabal Online Ep33+ Drop Editor - Python
 
 NOTE: I'm not an official programmer. I have just very basic knowledge about coding.
 
@@ -19,3 +19,8 @@ Required modules:
 pip install flask
 
 Running on http://127.0.0.1:5000
+
+Credits:
+-PwrDex
+-amiidotcom
+-AI
