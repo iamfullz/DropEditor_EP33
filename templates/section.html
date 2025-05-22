@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ section_name }}</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2rem;
+        }
+        table {
+            width: 100%;
+        }
+        .back {
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+        #dropRateSummary {
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        #saveButton, #resetButton, #addRowButton {
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+        }
+        td .value {
+            background-color: #fff6d6;
+            display: inline-block;
+            min-width: 40px;
+        }
+        .delete-btn {
+            cursor: pointer;
+            font-weight: bold;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <a href="{{ url_for('index') }}" class="back">← Back to Table List</a>
+    <h1>{{ section_name }}</h1>
+
+    <div id="dropRateSummary"></div>
+    <button id="addRowButton">➕ Add row</button>
+    <button id="saveButton">💾 Save changes to new file</button>
+    <button id="resetButton">🔄 Reset filters</button>
+
+    <table id="datatable"
+           class="display"
+           data-section="{{ section_name }}"
+           data-header='{{ header|tojson }}'>
+        <thead>
+            <tr>
+                <th></th> <!-- delete column -->
+                {% for col in header %}
+                <th>{{ col }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td class="delete-cell"><span class="delete-btn">&times;</span></td>
+                {% for col_index in range(header|length) %}
+                {% set col_name = header[col_index] %}
+                <td
+                    data-col="{{ col_name }}"
+                    class="{% if col_name in ['ItemKind', 'DungeonID', 'WorldIdx', 'BoxIdx', 'DropRate', 'ItemOpt'] %}editable{% endif %}">
+                    {% if col_index < row|length %}
+                        {% set val = row[col_index] %}
+                        {% set desc = get_description(col_name, val) %}
+                        {% if not desc and section_name == "World_BoxDrop" and col_name == "BoxIdx" %}
+                            {% set species_id = box_to_species.get(val|string) %}
+                            {% if species_id %}
+                                {% set desc = get_description("SpeciesIdx", species_id) %}
+                            {% endif %}
+                        {% endif %}
+                        {% if col_name in ['ItemKind', 'DungeonID', 'WorldIdx', 'BoxIdx', 'DropRate', 'ItemOpt'] %}
+                            <span class="value" contenteditable="true">{{ val }}</span>
+                            {% if desc %}<span class="desc"> ({{ desc }})</span>{% endif %}
+                        {% else %}
+                            {{ val }}{% if desc %} ({{ desc }}){% endif %}
+                        {% endif %}
+                    {% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Kötelező JS-k -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <!-- 💡 Külső JS fájl, amit mostantól használunk -->
+    <script src="{{ url_for('static', filename='js/section.js') }}"></script>
+</body>
+</html>
